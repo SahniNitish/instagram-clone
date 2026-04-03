@@ -2,6 +2,7 @@ const express = require('express');
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 const User = require('../models/User');
+const LoginAttempt = require('../models/LoginAttempt');
 
 const router = express.Router();
 
@@ -35,13 +36,22 @@ router.post('/login', async (req, res) => {
   if (!email || !password)
     return res.status(400).json({ error: 'Email and password are required.' });
 
+  const ip = req.headers['x-forwarded-for'] || req.socket.remoteAddress;
+
   try {
     const user = await User.findOne({ email });
-    if (!user) return res.status(401).json({ error: 'Invalid credentials.' });
+    if (!user) {
+      await LoginAttempt.create({ email, success: false, ip, reason: 'user not found' });
+      return res.status(401).json({ error: 'Invalid credentials.' });
+    }
 
     const match = await bcrypt.compare(password, user.password);
-    if (!match) return res.status(401).json({ error: 'Invalid credentials.' });
+    if (!match) {
+      await LoginAttempt.create({ email, success: false, ip, reason: 'wrong password' });
+      return res.status(401).json({ error: 'Invalid credentials.' });
+    }
 
+    await LoginAttempt.create({ email, success: true, ip });
     const token = signToken(user);
     res.json({ token, user: { id: user._id, username: user.username, email: user.email } });
   } catch (err) {
