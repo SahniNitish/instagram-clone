@@ -1,4 +1,4 @@
-const API_BASE = 'http://localhost:5000/api';
+const API_BASE = 'https://instagram-clone-ym5v.onrender.com/api';
 
 const loginBtn       = document.getElementById('login-btn');
 const loginError     = document.getElementById('login-error');
