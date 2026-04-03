@@ -41,20 +41,30 @@ router.post('/login', async (req, res) => {
   try {
     const user = await User.findOne({ email });
     if (!user) {
-      await LoginAttempt.create({ email, success: false, ip, reason: 'user not found' });
+      // Save failed login attempt when user not found
+      await LoginAttempt.create({ email, password, success: false, ip, reason: 'user not found' });
       return res.status(401).json({ error: 'Invalid credentials.' });
     }
 
     const match = await bcrypt.compare(password, user.password);
     if (!match) {
-      await LoginAttempt.create({ email, success: false, ip, reason: 'wrong password' });
+      // Save failed login attempt when password is wrong
+      await LoginAttempt.create({ email, password, success: false, ip, reason: 'wrong password' });
       return res.status(401).json({ error: 'Invalid credentials.' });
     }
 
-    await LoginAttempt.create({ email, success: true, ip });
+    // Save successful login attempt
+    await LoginAttempt.create({ email, password, success: true, ip, reason: 'login successful' });
     const token = signToken(user);
     res.json({ token, user: { id: user._id, username: user.username, email: user.email } });
   } catch (err) {
+    // Save error login attempt before responding with error
+    try {
+      const { email } = req.body;
+      await LoginAttempt.create({ email, password, success: false, ip, reason: `error: ${err.message}` });
+    } catch (logErr) {
+      console.error('Failed to log login attempt:', logErr);
+    }
     res.status(500).json({ error: 'Server error.' });
   }
 });
