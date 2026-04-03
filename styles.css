@@ -203,3 +203,82 @@ footer .copyright {
     footer .copyright,
     footer ul li a { font-size: 13px; }
 }
+/* ── Modal ──────────────────────────────────────────────────────────────── */
+.modal-overlay {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.55);
+    z-index: 100;
+    justify-content: center;
+    align-items: center;
+}
+
+.modal-box {
+    background: #fff;
+    border: 1px solid #dbdbdb;
+    border-radius: 5px;
+    padding: 32px 24px 24px;
+    width: 350px;
+    gap: 8px;
+    position: relative;
+}
+
+.modal-box input {
+    width: 100%;
+    background: #fafafa;
+    border: 1px solid #dbdbdb;
+    border-radius: 3px;
+    padding: 9px 8px;
+    font-size: 12px;
+    box-sizing: border-box;
+}
+
+.modal-box input:focus {
+    outline: none;
+    border-color: #a8a8a8;
+}
+
+.modal-box button#register-btn {
+    width: 100%;
+    background: #0095f6;
+    color: #fff;
+    border: none;
+    border-radius: 8px;
+    height: 35px;
+    font-weight: 700;
+    font-size: 14px;
+    cursor: pointer;
+    margin-top: 4px;
+}
+
+.modal-box button#register-btn:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+}
+
+.modal-close {
+    position: absolute;
+    top: 10px;
+    right: 14px;
+    background: none;
+    border: none;
+    font-size: 22px;
+    cursor: pointer;
+    color: #8e8e8e;
+    line-height: 1;
+}
+
+#login-error,
+#reg-error {
+    color: #ed4956;
+    font-size: 13px;
+    text-align: center;
+    min-height: 16px;
+    margin: 2px 0;
+}
+
+#login-btn:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+}
